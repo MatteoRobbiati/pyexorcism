@@ -1,6 +1,7 @@
 import logging
 import itertools
 
+
 class SimpleExorcism:
     def __init__(self, cubes, verbose=True):
         """
@@ -43,7 +44,9 @@ class SimpleExorcism:
             after = len(self.cubes)
             if before != after:
                 removed = before - after
-                self.logger.info(f"Removed {removed} duplicate cubes at iteration {iteration}")
+                self.logger.info(
+                    f"Removed {removed} duplicate cubes at iteration {iteration}"
+                )
                 changed = True
 
             # 2) Primary x-linking: dist-1 merging & dist-2 splitting
@@ -51,10 +54,14 @@ class SimpleExorcism:
             merges = 0
             splits = 0
             for i in range(n):
-                if i in skip: continue
-                for j in range(i+1, n):
-                    if j in skip: continue
-                    dist, diff_positions = self._cube_distance(self.cubes[i], self.cubes[j])
+                if i in skip:
+                    continue
+                for j in range(i + 1, n):
+                    if j in skip:
+                        continue
+                    dist, diff_positions = self._cube_distance(
+                        self.cubes[i], self.cubes[j]
+                    )
                     if dist == 1:
                         # merge differing bit
                         pos = diff_positions[0]
@@ -69,9 +76,9 @@ class SimpleExorcism:
                         p, q = diff_positions
                         c1, c2 = self.cubes[i], self.cubes[j]
                         # split on first differing pos
-                        split1 = c1[:p] + '-' + c1[p+1:]
+                        split1 = c1[:p] + "-" + c1[p + 1 :]
                         # split on second differing pos
-                        split2 = c1[:q] + '-' + c1[q+1:]
+                        split2 = c1[:q] + "-" + c1[q + 1 :]
                         new_cubes.extend([split1, split2])
                         skip.update({i, j})
                         splits += 1
@@ -93,13 +100,15 @@ class SimpleExorcism:
             # 3) Unlinking: do exactly one split of a '-' cube (ever)
             if not changed and not unlink_done:
                 for idx, cube in enumerate(self.cubes):
-                    if '-' in cube:
-                        pos = cube.index('-')
-                        c0 = cube[:pos] + '0' + cube[pos+1:]
-                        c1 = cube[:pos] + '1' + cube[pos+1:]
+                    if "-" in cube:
+                        pos = cube.index("-")
+                        c0 = cube[:pos] + "0" + cube[pos + 1 :]
+                        c1 = cube[:pos] + "1" + cube[pos + 1 :]
                         self.cubes.pop(idx)
                         self.cubes.extend([c0, c1])
-                        self.logger.info(f"Unlinked cube {cube} into {c0}, {c1} at iteration {iteration}")
+                        self.logger.info(
+                            f"Unlinked cube {cube} into {c0}, {c1} at iteration {iteration}"
+                        )
                         changed = True
                         unlink_done = True
                         break
@@ -108,7 +117,9 @@ class SimpleExorcism:
 
         self.minimized_cost = len(self.cubes)
         reduction = self.initial_cost - self.minimized_cost
-        self.logger.info(f"Minimization complete: {self.minimized_cost} cubes remain (reduced by {reduction})")
+        self.logger.info(
+            f"Minimization complete: {self.minimized_cost} cubes remain (reduced by {reduction})"
+        )
         return self.cubes
 
     def _cube_distance(self, c1, c2):
@@ -117,16 +128,16 @@ class SimpleExorcism:
         for i, (a, b) in enumerate(zip(c1, c2)):
             if a != b:
                 # both are concrete literals 0/1
-                if a != '-' and b != '-':
+                if a != "-" and b != "-":
                     diff.append(i)
                 else:
                     # incomparable (literal vs '-') for primary linking
-                    return (float('inf'), [])
+                    return (float("inf"), [])
         return (len(diff), diff)
 
     def _merge(self, c1, c2, pos):
         """Merge two cubes differing at position pos into a don't-care there."""
-        return c1[:pos] + '-' + c1[pos+1:]
+        return c1[:pos] + "-" + c1[pos + 1 :]
 
     @staticmethod
     def from_pla(pla_lines):
@@ -134,10 +145,10 @@ class SimpleExorcism:
         cubes = []
         for line in pla_lines:
             line = line.strip()
-            if not line or line.startswith('.'):
+            if not line or line.startswith("."):
                 continue
             parts = line.split()
-            if len(parts) == 2 and parts[1] == '1':
+            if len(parts) == 2 and parts[1] == "1":
                 cubes.append(parts[0])
         return SimpleExorcism(cubes)
 
@@ -147,7 +158,7 @@ class SimpleExorcism:
         for cube in self.initial_cubes:
             match = True
             for bit, lit in zip(assignment, cube):
-                if lit != '-' and lit != bit:
+                if lit != "-" and lit != bit:
                     match = False
                     break
             if match:
@@ -160,7 +171,7 @@ class SimpleExorcism:
         for cube in self.cubes:
             match = True
             for bit, lit in zip(assignment, cube):
-                if lit != '-' and lit != bit:
+                if lit != "-" and lit != bit:
                     match = False
                     break
             if match:
@@ -172,7 +183,7 @@ class SimpleExorcism:
         if self.minimized_cost is None:
             raise RuntimeError("Call minimize() first.")
         n = len(self.initial_cubes[0])
-        for bits in itertools.product('01', repeat=n):
+        for bits in itertools.product("01", repeat=n):
             if self.evaluate(bits) != self.minimized_evaluate(bits):
                 return False
         return True
@@ -181,6 +192,9 @@ class SimpleExorcism:
         """Returns (initial_cost, minimized_cost, ratio)"""
         if self.minimized_cost is None:
             raise RuntimeError("Call minimize() first.")
-        ratio = (self.initial_cost / self.minimized_cost
-                 if self.minimized_cost else float('inf'))
+        ratio = (
+            self.initial_cost / self.minimized_cost
+            if self.minimized_cost
+            else float("inf")
+        )
         return self.initial_cost, self.minimized_cost, ratio

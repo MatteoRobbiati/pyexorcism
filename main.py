@@ -13,7 +13,9 @@ nterms = 10
 theta = 0.01
 
 # Generating a generic Z-based function
-terms, func_string = random_Z_boolean_function(nsites, nterms, max_locality=nsites, seed=42)
+terms, func_string = random_Z_boolean_function(
+    nsites, nterms, max_locality=nsites, seed=42
+)
 print("Random Boolean function (in Zs):")
 print(func_string)
 

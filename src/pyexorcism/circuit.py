@@ -1,5 +1,6 @@
 from qibo import Circuit, gates
 
+
 def add_cube_phase(circuit, cube, theta, qubits):
     """
     Adds a multi-controlled RZ rotation according to the cube.
@@ -27,6 +28,7 @@ def add_cube_phase(circuit, cube, theta, qubits):
     for q in flip:
         circuit.add(gates.X(q))
 
+
 def esop_to_qibo_circuit(minimized_cubes, n, theta=3.14):
     """
     minimized_cubes: list of cube strings (from SimpleExorcism)
@@ -38,7 +40,7 @@ def esop_to_qibo_circuit(minimized_cubes, n, theta=3.14):
     qubits = list(range(n))
     for cube in minimized_cubes:
         # Skip cubes that are all '-' (global phase, not physical)
-        if all(c == '-' for c in cube):
+        if all(c == "-" for c in cube):
             continue
         add_cube_phase(circuit, cube, theta, qubits)
     return circuit
