@@ -1,0 +1,24 @@
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "pyexorcism"
+version = "0.0.1"
+description = "Construct optimal diagonal evolutions from random ESOP"
+authors = ["Matteo Robbiati"]
+readme = "README.md"
+repository = "https://github.com/MatteoRobbiati/pyexorcism/"
+packages = [{ include = "pyexorcism", from = "src" }]
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.13"
+numpy = "^2.0.0"
+qibo = {git="https://github.com/qiboteam/qibo"}
+
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
+ipython = "^7.34"
+pdbpp = "^0.10.3"
